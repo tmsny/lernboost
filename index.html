@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>LernBoost</title>
+<style>
+:root{--bg:#fff;--fg:#0a0a0a;--mut:#737373;--line:#e5e5e5;--sf:#fafafa;--hv:#f0f0f0}
+@media(prefers-color-scheme:dark){:root:not([data-t=light]){--bg:#0a0a0a;--fg:#fafafa;--mut:#a3a3a3;--line:#262626;--sf:#111;--hv:#1c1c1c}}
+:root[data-t=dark]{--bg:#0a0a0a;--fg:#fafafa;--mut:#a3a3a3;--line:#262626;--sf:#111;--hv:#1c1c1c}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:8px;padding:10px 18px;border-bottom:1px solid var(--line)}header b{letter-spacing:3px;font-size:13px}#sta{flex:1;color:var(--mut);font-size:13px}
+button,.bt{font:inherit;background:var(--fg);color:var(--bg);border:1px solid var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer;display:inline-block;transition:.12s}
+button.g,.bt.g{background:transparent;color:var(--fg);border-color:var(--line)}button.g:hover:not(:disabled),.bt.g:hover{background:var(--hv)}button:disabled{opacity:.4}button:hover:not(:disabled):not(.g){opacity:.8}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;outline:0}input:focus,textarea:focus{border-color:var(--fg)}input[type=checkbox]{width:auto;accent-color:var(--fg)}
+#app{flex:1;display:grid;grid-template-columns:264px minmax(0,1fr) 264px;min-height:0}
+aside{overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--sf)}#L{border-right:1px solid var(--line)}#R{border-left:1px solid var(--line)}
+#mid{display:flex;flex-direction:column;min-height:0}#mh{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line)}#ttl{margin:0;font-size:18px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#vt{display:flex;gap:4px}#vt button{padding:6px 12px}
+.v{flex:1;min-height:0;overflow:auto;padding:24px;max-width:820px;width:100%;margin:0 auto}#v-chat{display:flex;flex-direction:column;padding:0;overflow:hidden;max-width:none}
+#msgs{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:820px;margin:0 auto}
+.m{max-width:88%;padding:10px 15px;border:1px solid var(--line);border-radius:16px}.m.u{align-self:flex-end;background:var(--fg);color:var(--bg);border-color:var(--fg)}.m p{margin:4px 0}.m h4{margin:10px 0 2px}.cp{padding:2px 8px;font-size:12px;margin-top:6px}
+.cb{border-top:1px solid var(--line);padding:12px 20px;width:100%;max-width:860px;margin:0 auto}.chips{display:flex;gap:6px;overflow:auto;padding-bottom:8px}.chips button{white-space:nowrap;padding:4px 11px;font-size:13px;border-radius:99px}
+.ib{display:flex;gap:8px}.ib textarea{resize:none}
+.hd{font-weight:600;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin-top:10px;display:flex;justify-content:space-between;align-items:center}.hd button{padding:2px 9px;font-size:12px}
+.pi{display:flex;justify-content:space-between;gap:6px;padding:8px 11px;border-radius:10px;cursor:pointer}.pi:hover{background:var(--hv)}.pi.on{background:var(--fg);color:var(--bg)}.pi small{opacity:.65;white-space:nowrap}
+.src{display:flex;gap:8px;align-items:center;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}.src.off{opacity:.45}
+.th{width:40px;height:40px;border-radius:8px;border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:none;background:var(--sf)}.th img{width:100%;height:100%;object-fit:cover}
+.sm{flex:1;min-width:0;cursor:pointer}.sm b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}small,.mut{color:var(--mut);font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:110px}.row>button,.row>.bt{flex:0 0 auto}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}.seg button{flex:1;border:0;border-radius:0;background:var(--bg);color:var(--fg);padding:6px 4px}.seg button.on{background:var(--fg);color:var(--bg)}
+.tl{width:100%;text-align:left;padding:10px 12px}.tl b{display:block;font-weight:600}.tl small{display:block;color:inherit;opacity:.6}
+.dz{border:2px dashed var(--line);border-radius:16px;padding:34px 16px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;cursor:pointer;margin:14px 0;transition:.12s}.dz:hover{border-color:var(--fg);background:var(--hv)}
+.ob{border:1px solid var(--line);border-radius:18px;padding:28px;margin:auto;max-width:480px;text-align:center}.ob ol{text-align:left;color:var(--mut);padding-left:20px}
+.qi{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.fc{min-height:220px;border:1px solid var(--line);border-radius:18px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:21px;padding:28px;cursor:pointer;margin:12px 0}.fc hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+.o{display:block;width:100%;text-align:left;margin-top:8px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}.o:hover{border-color:var(--fg)}
+.o.ok{border:2px solid var(--fg);font-weight:600}.o.ok::before{content:'✓ '}.o.no{border-style:dashed;text-decoration:line-through}.o.no::before{content:'✗ '}
+.pb{height:4px;background:var(--line);border-radius:4px;margin:8px 0 16px}.pb i{display:block;height:100%;background:var(--fg);border-radius:4px}
+.ci{display:flex;gap:8px;justify-content:space-between;border-bottom:1px solid var(--line);padding:9px 0}
+dialog{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:18px;width:min(660px,94vw);max-height:92vh;padding:0}dialog::backdrop{background:rgba(0,0,0,.55)}.dp{padding:20px;display:grid;gap:10px}
+.kr{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:8px}.pim{height:90px;border-radius:8px;border:1px solid var(--line);margin:0 6px 6px 0}
+#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:12px;display:none;max-width:90%;z-index:999}
+body.drag::after{content:'Zum Hochladen loslassen';position:fixed;inset:0;background:rgba(0,0,0,.75);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;z-index:200}
+#bn{display:none;border-top:1px solid var(--line)}#bn button{flex:1;border-radius:0;border:0}
+@media(max-width:860px){#app{display:flex}#app>*{display:none;width:100%;border:0!important}body[data-pane=L] #L,body[data-pane=R] #R,body[data-pane=M] #mid{display:flex}#bn{display:flex}.v,#msgs{padding:16px}}
+</style></head><body data-pane="M">
+<header><b>◼ LERNBOOST</b><span id="sta"></span><span id="sc" class="mut"></span><button class="g" id="tmr" onclick="tg()">⏱ 25:00</button><button class="g" id="kc" onclick="openKeys()">🔑 0</button><button class="g" onclick="th()">◐</button></header>
+<div id="app">
+<aside id="L">
+ <div class="hd">Fächer<span><button class="g" onclick="addP()">＋</button> <button class="g" onclick="ren()">✎</button> <button class="g" onclick="delP()">🗑</button></span></div><div id="pl"></div>
+ <div class="hd">Material</div><button class="tl" onclick="openU()"><b>＋ Material hinzufügen</b><small>PDF, Word, Bilder, Text, Foto</small></button><div id="ml" style="display:grid;gap:6px"></div>
+</aside>
+<main id="mid">
+ <div id="mh"><h2 id="ttl"></h2><div id="vt"><button id="t-chat" onclick="setView('chat')">Chat</button><button id="t-cards" class="g" onclick="setView('cards')">Karten</button><button id="t-quiz" class="g" onclick="setView('quiz')">Quiz</button></div></div>
+ <div id="v-chat" class="v"><div id="msgs"></div><div class="cb"><div class="chips" id="chips"></div><div class="ib"><textarea id="ci" rows="2" placeholder="Frag zu deinem Material …" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea><button id="snd" onclick="send()">↑</button></div></div></div>
+ <div id="v-cards" class="v" hidden></div><div id="v-quiz" class="v" hidden></div>
+</main>
+<aside id="R">
+ <div class="hd">Einstellungen</div><input id="tp" placeholder="Thema / Fokus (optional)">
+ <small>Anzahl (bei Lernplan: Tage)</small><div class="seg" id="sn"></div><small>Niveau</small><div class="seg" id="sd"></div>
+ <div id="gl" style="display:grid;gap:6px"></div>
+</aside>
+</div>
+<nav id="bn"><button class="g" onclick="pane('L')">Fächer</button><button class="g" onclick="pane('M')">Lernen</button><button class="g" onclick="pane('R')">Generieren</button></nav>
+<dialog id="ud"><div class="dp"><div class="row"><b style="font-size:18px">Material hinzufügen</b><button class="g" onclick="ud.close()">Fertig</button></div>
+<label class="dz"><input type="file" multiple accept="image/*,.pdf,.docx,.txt,.md,.csv" hidden onchange="addFiles([...this.files]);this.value=''"><b>Dateien hierher ziehen oder klicken</b><span class="mut">PDF · Word (.docx) · Bilder · TXT/MD/CSV · Screenshot mit Strg+V einfügen</span></label>
+<div class="row"><label class="bt g">📷 Foto aufnehmen<input type="file" accept="image/*" capture="environment" hidden onchange="addFiles([...this.files]);this.value=''"></label><button class="g" onclick="$('#nt').hidden=!$('#nt').hidden">✎ Text einfügen</button></div>
+<div id="nt" hidden style="display:grid;gap:8px"><input id="nn" placeholder="Titel (optional)"><textarea id="nx" rows="6" placeholder="Text, Notizen oder Buchabschnitt hier einfügen …"></textarea><button onclick="addN()">Als Material speichern</button></div>
+<div id="uq"></div></div></dialog>
+<dialog id="pd"><div class="dp" id="pb"></div></dialog>
+<dialog id="dg"><div class="dp"><div class="row"><b style="font-size:18px">API-Keys &amp; Fallback</b><button class="g" onclick="dg.close()">Fertig</button></div>
+<p class="mut">Reihenfolge = Priorität. Bei Rate-Limit, Quota- oder Serverfehler wird automatisch der nächste aktive Key probiert. Keys bleiben nur in diesem Browser.</p><div id="kl" style="display:grid;gap:8px"></div>
+<div class="row"><button onclick="addK()">＋ Key</button><button class="g" onclick="dl('lernboost-backup.json',JSON.stringify({...S,keys:[]}))">Backup exportieren</button><label class="bt g">Backup importieren<input type="file" accept=".json" hidden onchange="imp(this)"></label></div></div></dialog>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const db=new Promise(r=>{const q=indexedDB.open('lb',1);q.onupgradeneeded=()=>q.result.createObjectStore('s');q.onsuccess=()=>r(q.result)});
+const idb=(m,k,v)=>db.then(d=>new Promise(r=>{const o=d.transaction('s',m==='get'?'readonly':'readwrite').objectStore('s'),q=m==='get'?o.get(k):o.put(v,k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()}));
+let S={pr:[],keys:[],cur:null,t:'',stat:{}},tm,cool={},view='chat',quiz=[],qi=0,score=0,wrong=[],ans=0,qu=[],flip=0,busy=0,studying=0,nq=10,dl_='mittel',Q=[],mi=0,dc=0,tEnd=0;
+const save=()=>{clearTimeout(tm);tm=setTimeout(()=>idb('put','S',S),250)},P=()=>S.pr.find(p=>p.id===S.cur);
+const np=n=>{const p={id:Date.now()+Math.random().toString(36).slice(2,5),n,mats:[],chat:[],cards:[]};S.pr.push(p);S.cur=p.id;return p};
+const PV={openai:{n:'OpenAI',t:'o',u:'https://api.openai.com/v1/chat/completions',m:'gpt-4o-mini'},
+anthropic:{n:'Anthropic Claude',t:'a',u:'https://api.anthropic.com/v1/messages',m:'claude-sonnet-5-5'},
+gemini:{n:'Google Gemini',t:'g',u:'https://generativelanguage.googleapis.com/v1beta/models',m:'gemini-2.5-flash'},
+openrouter:{n:'OpenRouter',t:'o',u:'https://openrouter.ai/api/v1/chat/completions',m:'openai/gpt-4o-mini'},
+groq:{n:'Groq',t:'o',u:'https://api.groq.com/openai/v1/chat/completions',m:'meta-llama/llama-4-scout-17b-16e-instruct'},
+mistral:{n:'Mistral',t:'o',u:'https://api.mistral.ai/v1/chat/completions',m:'pixtral-large-latest'},
+deepseek:{n:'DeepSeek (nur Text)',t:'o',u:'https://api.deepseek.com/chat/completions',m:'deepseek-chat'},
+custom:{n:'Eigener (OpenAI-kompatibel)',t:'o',u:'',m:'llama3.2'}};
+const SYS='Du bist ein exzellenter, präziser Lerncoach für Schüler. Antworte in der Sprache des Materials (Standard: Deutsch). Erfinde keine Fakten.';
+const T={sum:()=>'Fasse das Material übersichtlich zusammen: Kernaussagen als Stichpunkte, wichtige Begriffe fett, am Ende 3 Merksätze. Nutze Markdown.',
+exp:()=>'Erkläre das Thema Schritt für Schritt und einfach, mit Beispielen. Nutze Markdown.',
+gloss:()=>'Erstelle ein Glossar der wichtigsten Begriffe mit kurzen Definitionen (Markdown-Liste).',
+plan:n=>`Erstelle einen realistischen Lernplan über ${n} Tage mit konkreten Aufgaben pro Tag und Wiederholungen.`,
+solve:()=>'Löse die Aufgabe(n) im Material Schritt für Schritt mit nachvollziehbarem Rechenweg und Endergebnis.',
+mind:()=>'Erfinde einprägsame Eselsbrücken, Merksprüche und Assoziationen für die wichtigsten Inhalte.',
+cards:(n,d)=>`Erstelle genau ${n} Lernkarten (kurze, prüfbare Frage und knappe Antwort; Niveau: ${d}). Antworte NUR mit JSON: [{"q":"...","a":"..."}]`,
+quiz:(n,d)=>`Erstelle genau ${n} Multiple-Choice-Fragen (Niveau: ${d}) mit je 4 Optionen. Antworte NUR mit JSON: [{"q":"...","o":["...","...","...","..."],"c":0,"e":"kurze Erklärung"}] (c = Index der richtigen Option, zufällig verteilt).`};
+const G=[['Üben'],['cards','Lernkarten','Spaced Repetition + Anki-Export'],['quiz','Test / Quiz','Multiple Choice mit Erklärungen'],['ask','Abfrage im Chat','Die KI fragt dich Schritt für Schritt ab'],
+['Verstehen'],['sum','Zusammenfassung','Kernaussagen + Merksätze'],['exp','Einfach erklärt','Schritt für Schritt'],['gloss','Glossar','Begriffe und Definitionen'],['mind','Eselsbrücken','Merkhilfen'],
+['Planen & Lösen'],['plan','Lernplan','Aufgaben pro Tag'],['solve','Aufgabe lösen','Mit Rechenweg']];
+const CH=['Fasse mein Material zusammen','Erkläre mir das Wichtigste einfach','Was ist besonders prüfungsrelevant?','Frag mich ab'];
+$('#gl').innerHTML=G.map(g=>g.length<2?`<div class="hd">${g[0]}</div>`:`<button class="g ai tl" onclick="run('${g[0]}')"><b>${g[1]}</b><small>${g[2]}</small></button>`).join('');
+$('#chips').innerHTML=CH.map((c,i)=>`<button class="g ai" onclick="send(CH[${i}])">${c}</button>`).join('')+'<button class="g" onclick="if(confirm(\'Chat leeren?\')){P().chat=[];save();rmsgs()}">🗑</button>';
+function segs(){$('#sn').innerHTML=[5,10,20,30].map(n=>`<button class="${n===nq?'on':''}" onclick="nq=${n};segs()">${n}</button>`).join('');$('#sd').innerHTML=['leicht','mittel','schwer'].map(d=>`<button class="${d===dl_?'on':''}" onclick="dl_='${d}';segs()">${d}</button>`).join('')}
+function toast(m,t){const e=$('#toast');e.textContent=m;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',t||3500)}
+function dl(n,s){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/plain'}));a.download=n;a.click()}
+const sta=m=>$('#sta').textContent=m,lock=v=>document.querySelectorAll('.ai,#snd').forEach(b=>b.disabled=v);
+function md(s){let h='',ul=0;for(let l of esc(s).split('\n')){const li=/^\s*[-*•] (.*)/.exec(l),hd=/^#{1,4} (.*)/.exec(l);if(li&&!ul){h+='<ul>';ul=1}if(!li&&ul){h+='</ul>';ul=0}l=(li?li[1]:hd?hd[1]:l).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>');h+=li?'<li>'+l+'</li>':hd?'<h4>'+l+'</h4>':l?'<p>'+l+'</p>':''}return h+(ul?'</ul>':'')}
+function th(){const d=document.documentElement;S.t=getComputedStyle(document.body).backgroundColor==='rgb(10, 10, 10)'?'light':'dark';d.dataset.t=S.t;save()}
+const pane=x=>document.body.dataset.pane=x;
+const dk=(o=0)=>new Date(Date.now()-o*864e5).toISOString().slice(0,10);
+function us(){const s=S.stat||{};let n=0,o=s[dk()]?0:1;while(s[dk(o)]){n++;o++}$('#sc').textContent=`🔥 ${n} Tage · ${s[dk()]||0} heute`}
+function bump(){S.stat=S.stat||{};S.stat[dk()]=(S.stat[dk()]||0)+1;us()}
+function tg(){tEnd=tEnd?0:Date.now()+25*6e4}
+setInterval(()=>{const b=$('#tmr');if(!tEnd){b.textContent='⏱ 25:00';return}const s=Math.max(0,Math.round((tEnd-Date.now())/1e3));b.textContent='⏱ '+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(!s){tEnd=0;toast('Fokus-Runde geschafft – 5 Min. Pause 🎉',9000)}},1000);
+/* UI */
+function ui(){rp();rm();setView(view);us();$('#ttl').textContent=P().n;$('#kc').textContent='🔑 '+S.keys.filter(k=>k.on&&(k.key||k.p==='custom')).length}
+function rp(){$('#pl').innerHTML=S.pr.map(p=>{const d=p.cards.filter(c=>c.d<=Date.now()).length;return `<div class="pi ${p.id===S.cur?'on':''}" onclick="sel('${p.id}')"><span>${esc(p.n)}</span><small>${d?d+' fällig':p.mats.length+' Quellen'}</small></div>`}).join('')}
+const meta=m=>m.t?(m.pg?m.pg+' S. · ':'')+(m.t.length/1000).toFixed(1)+'k Zeichen':m.im?m.im.length+(m.im.length>1?' Bilder':' Bild')+' (ohne Text)':'leer';
+function rm(){const p=P();$('#ml').innerHTML=p.mats.map((m,i)=>`<div class="src ${m.on===false?'off':''}"><input type="checkbox" ${m.on!==false?'checked':''} onchange="P().mats[${i}].on=this.checked;save();rm()"><div class="th" onclick="openM(${i})">${m.im&&m.im[0]?`<img src="${m.im[0]}">`:{pdf:'PDF',docx:'DOC',txt:'TXT',note:'NOTE'}[m.k]||'TXT'}</div><div class="sm" onclick="openM(${i})"><b>${esc(m.n)}</b><small>${meta(m)}</small></div></div>`).join('')||'<p class="mut">Noch kein Material in diesem Fach.</p>';$('#ml').insertAdjacentHTML('beforebegin','');}
+function sel(id){S.cur=id;quiz=[];studying=0;save();ui();pane('M')}
+function addP(){const n=prompt('Neues Fach / Projekt:');if(n&&n.trim()){np(n.trim());quiz=[];save();ui()}}
+function ren(){const n=prompt('Name des Fachs:',P().n);if(n&&n.trim()){P().n=n.trim();save();ui()}}
+function delP(){if(S.pr.length<2)return toast('Mindestens ein Fach nötig.');if(confirm('„'+P().n+'“ mit Material, Chat und Karten löschen?')){S.pr=S.pr.filter(p=>p.id!==S.cur);S.cur=S.pr[0].id;quiz=[];save();ui()}}
+function setView(v){view=v;['chat','cards','quiz'].forEach(x=>{$('#v-'+x).hidden=x!==v;$('#t-'+x).className=x===v?'':'g'});if(v==='cards')rc();if(v==='quiz'){if(!quiz.length&&P().quiz)quiz=P().quiz;rq()}if(v==='chat')rmsgs()}
+function rmsgs(){const p=P(),e=$('#msgs');$('#chips').hidden=!p.mats.length&&!p.chat.length;
+ e.innerHTML=p.chat.map((m,i)=>`<div class="m ${m.role==='user'?'u':''}">${md(m.content)}${m.role==='user'?'':`<button class="g cp" onclick="navigator.clipboard.writeText(P().chat[${i}].content);toast('Kopiert')">Kopieren</button>`}</div>`).join('')||(p.mats.length?'<p class="mut" style="margin:auto">Frag etwas zu deinem Material oder nutze die Vorschläge unten und die Generatoren rechts.</p>':'<div class="ob"><h2 style="margin-top:0">Starte mit deinem Material</h2><ol><li>Lade Skript, Heft-Foto oder PDF hoch</li><li>Erzeuge Lernkarten, Quiz oder eine Zusammenfassung</li><li>Wiederhole täglich – fällige Karten siehst du links</li></ol><button onclick="openU()">＋ Material hinzufügen</button></div>');e.scrollTop=e.scrollHeight}
+/* Upload */
+function openU(){Q=[];rUq();ud.showModal()}
+function rUq(){$('#uq').innerHTML=Q.slice(0,12).map(q=>`<div class="qi"><span>${q.s==='run'?'⏳':q.s==='ok'?'✓':'⚠'}</span><div><b>${esc(q.n)}</b><br><small>${esc(q.m)}</small></div></div>`).join('')}
+function shrink(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.8))};im.onerror=()=>r(null);im.src=fr.result};fr.readAsDataURL(f)})}
+const lib=u=>new Promise((r,j)=>{const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=()=>j(new Error('Bibliothek nicht ladbar (Internet nötig)'));document.head.append(s)});
+async function pdf(f,cb){if(!window.pdfjsLib){await lib('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}
+ const d=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let t='',im=[];
+ for(let i=1;i<=d.numPages;i++){cb('Seite '+i+' / '+d.numPages);const pg=await d.getPage(i);t+='--- Seite '+i+' ---\n'+(await pg.getTextContent()).items.map(x=>x.str).join(' ')+'\n\n'}
+ if(t.replace(/--- Seite \d+ ---|\s/g,'').length<50){t='';for(let i=1;i<=Math.min(d.numPages,6);i++){cb('Scan: Seite '+i+' als Bild');const pg=await d.getPage(i),v=pg.getViewport({scale:1.3}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await pg.render({canvasContext:c.getContext('2d'),viewport:v}).promise;im.push(c.toDataURL('image/jpeg',.7))}}
+ return{k:'pdf',pg:d.numPages,t,im}}
+async function docx(f){if(!window.mammoth)await lib('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');return{k:'docx',t:(await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()})).value}}
+async function addFiles(fl){if(!fl.length)return;if(!ud.open)ud.showModal();const p=P();
+ for(const f of fl){const nm=f.name||'Foto',q={n:nm,s:'run',m:'wird gelesen …'};Q.unshift(q);rUq();
+  try{const x=/\.([a-z0-9]+)$/i.exec(nm),ex=x?x[1].toLowerCase():'';let m;
+   if(f.type.startsWith('image/')){const s=await shrink(f);if(!s)throw new Error('Bild nicht lesbar');m={k:'img',im:[s]}}
+   else if(ex==='pdf'||f.type==='application/pdf')m=await pdf(f,s=>{q.m=s;rUq()});
+   else if(ex==='docx')m=await docx(f);
+   else if(f.type.startsWith('text/')||/^(txt|md|csv|json)$/.test(ex)){m={k:'txt',t:await f.text()}}
+   else throw new Error('Format nicht unterstützt (PDF, DOCX, Bilder, TXT/MD/CSV)');
+   if(m.k!=='img'&&!m.t.trim()&&!(m.im&&m.im.length))throw new Error('Kein Text gefunden');
+   m.n=nm;m.id=Date.now()+Math.random();m.on=true;p.mats.push(m);q.s='ok';q.m=meta(m)}
+  catch(e){q.s='err';q.m=e.message}rUq()}
+ save();rm();rp();rmsgs()}
+function addN(){const t=$('#nx').value.trim();if(!t)return;P().mats.push({id:Date.now(),k:'note',n:$('#nn').value.trim()||t.slice(0,28),t,on:true});Q.unshift({n:$('#nn').value.trim()||'Notiz',s:'ok',m:(t.length/1000).toFixed(1)+'k Zeichen'});$('#nx').value=$('#nn').value='';rUq();save();rm();rp();rmsgs()}
+document.addEventListener('paste',e=>{const f=[...(e.clipboardData.files||[])];if(f.length){e.preventDefault();addFiles(f)}});
+document.addEventListener('dragenter',e=>{e.preventDefault();dc++;document.body.classList.add('drag')});document.addEventListener('dragleave',()=>{if(--dc<=0){dc=0;document.body.classList.remove('drag')}});
+document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();dc=0;document.body.classList.remove('drag');addFiles([...e.dataTransfer.files])});
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+function openM(i){mi=i;const m=P().mats[i];$('#pb').innerHTML=`<div class="row"><b style="font-size:18px">Material</b><button class="g" onclick="pd.close()">Schließen</button></div><input id="pn" value="${esc(m.n)}"><div>${(m.im||[]).map(s=>`<img class="pim" src="${s}">`).join('')}</div><small>${meta(m)}${!m.t&&m.im?' – Bilder werden direkt an die KI geschickt. Mit „Text auslesen“ wird daraus durchsuchbarer, bearbeitbarer Text (spart Tokens).':''}</small><textarea id="pt" rows="10" placeholder="Hier steht der extrahierte Text – du kannst ihn korrigieren.">${esc(m.t||'')}</textarea><div class="row">${m.im&&m.im.length?'<button class="g ai" onclick="ocr()">✨ Text per KI auslesen</button>':''}<button class="g" onclick="if(confirm(\'Material löschen?\')){P().mats.splice(mi,1);save();rm();rp();rmsgs();pd.close()}">Löschen</button><button onclick="sm()">Speichern</button></div>`;pd.showModal()}
+function sm(){const m=P().mats[mi];m.n=$('#pn').value.trim()||m.n;m.t=$('#pt').value.trim();save();rm();pd.close()}
+function ocr(){const m=P().mats[mi];job(async()=>{$('#pt').value=await ai([{role:'system',content:SYS},{role:'user',content:'Transkribiere den gesamten Text der Bilder möglichst vollständig und originalgetreu (Formeln als Text, Tabellen als Text). Gib NUR den Text aus.'}],m.im.slice(0,6))})}
+const ctx=()=>{const on=P().mats.filter(m=>m.on!==false);return{t:on.filter(m=>m.t).map(m=>`### ${m.n}\n${m.t}`).join('\n\n').slice(0,40000),im:on.filter(m=>!m.t&&m.im).flatMap(m=>m.im).slice(0,6)}};
+/* KI mit Fallback */
+async function call(e,msgs,im){const p=PV[e.p],model=e.m||p.m,url=e.u||p.u,key=e.key;if(!url)throw new Error('URL fehlt');
+ const sys=msgs[0].role==='system'?msgs[0].content:'',ms=msgs.filter(m=>m.role!=='system'),li=ms.length-1;let u=url,h={'Content-Type':'application/json'},b;
+ if(p.t==='a'){h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';
+  b={model,max_tokens:4096,system:sys,messages:ms.map((m,i)=>({role:m.role,content:i===li&&im.length?[...im.map(x=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:x.split(',')[1]}})),{type:'text',text:m.content}]:m.content}))}}
+ else if(p.t==='g'){u=`${url}/${model}:generateContent?key=${encodeURIComponent(key)}`;
+  b={systemInstruction:{parts:[{text:sys}]},contents:ms.map((m,i)=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content},...(i===li?im.map(x=>({inline_data:{mime_type:'image/jpeg',data:x.split(',')[1]}})):[])]}))}}
+ else{if(key)h.Authorization='Bearer '+key;
+  b={model,messages:[...(sys?[{role:'system',content:sys}]:[]),...ms.map((m,i)=>({role:m.role,content:i===li&&im.length?[{type:'text',text:m.content},...im.map(x=>({type:'image_url',image_url:{url:x}}))]:m.content}))]}}
+ const r=await fetch(u,{method:'POST',headers:h,body:JSON.stringify(b)});let d;try{d=await r.json()}catch(x){d={}}
+ if(!r.ok){const er=new Error((d.error&&(d.error.message||d.error))||JSON.stringify(d).slice(0,200)||'HTTP '+r.status);er.status=r.status;throw er}
+ return p.t==='a'?d.content.map(x=>x.text||'').join(''):p.t==='g'?d.candidates[0].content.parts.map(x=>x.text||'').join(''):d.choices[0].message.content}
+async function ai(msgs,im){const ks=S.keys.map((k,i)=>({k,i})).filter(x=>x.k.on&&(x.k.key||x.k.p==='custom'));if(!ks.length){openKeys();throw new Error('Kein API-Key eingetragen.')}
+ let o=ks.filter(x=>!(cool[x.i]>Date.now()));if(!o.length)o=ks;let le;
+ for(const x of o){try{return await call(x.k,msgs,im||[])}catch(e){le=e;const s=e.status;cool[x.i]=Date.now()+(s===429?6e4:s===401||s===403?6e5:2e4);if(o.length>1)toast(PV[x.k.p].n+': '+String(e.message).slice(0,60)+' → nächster Anbieter',5000)}}
+ throw new Error('Alle Anbieter fehlgeschlagen: '+le.message)}
+const pj=s=>{const m=s.match(/\[[\s\S]*\]/);return JSON.parse(m?m[0]:s)};
+async function job(f){if(busy)return;busy=1;sta('⏳ KI arbeitet …');lock(1);try{await f()}catch(e){toast('⚠️ '+e.message,6000)}busy=0;sta('');lock(0)}
+function send(txt){const v=(typeof txt==='string'?txt:$('#ci').value).trim();if(!v||busy)return;const p=P();$('#ci').value='';p.chat.push({role:'user',content:v});setView('chat');save();
+ job(async()=>{const c=ctx(),r=await ai([{role:'system',content:SYS+' Wenn der Schüler abgefragt werden will: stelle immer nur EINE Frage, warte auf die Antwort, bewerte sie kurz und stelle dann die nächste.'+(c.t?'\n\nMATERIAL DES SCHÜLERS:\n'+c.t:'')},...p.chat.slice(-16)],c.im.slice(0,4));p.chat.push({role:'assistant',content:r});rmsgs();save()})}
+function run(k){const p=P(),c=ctx(),tp=$('#tp').value.trim();if(!c.t&&!c.im.length&&!tp)return openU(),toast('Lade zuerst Material hoch oder gib ein Thema ein.');
+ if(k==='ask'){pane('M');return send('Frag mich Schritt für Schritt zu meinem Material ab'+(tp?' (Fokus: '+tp+')':'')+'. Fang mit der ersten Frage an.')}
+ job(async()=>{const out=await ai([{role:'system',content:SYS},{role:'user',content:T[k](nq,dl_)+(tp?'\nFokus/Thema: '+tp:'')+'\n\nMATERIAL:\n'+(c.t||'(siehe Bilder / nur Thema)')}],c.im);
+  if(k==='cards'){const a=pj(out).filter(x=>x&&x.q&&x.a).map(x=>({q:String(x.q),a:String(x.a),b:0,d:0}));p.cards.push(...a);studying=0;toast(a.length+' Karten hinzugefügt');setView('cards')}
+  else if(k==='quiz'){quiz=pj(out).filter(x=>x&&x.q&&Array.isArray(x.o)&&x.o.length>1);p.quiz=quiz;qi=score=0;wrong=[];setView('quiz')}
+  else{p.chat.push({role:'assistant',content:'**'+G.find(g=>g[0]===k)[1]+'**\n\n'+out});setView('chat')}
+  save();rp();pane('M')})}
+/* Karten */
+function rc(){const p=P(),e=$('#v-cards');if(studying)return rs();const due=p.cards.filter(c=>c.d<=Date.now()).length;
+ e.innerHTML=`<h3 style="margin-top:0">${p.cards.length} Karten · ${due} fällig</h3><div class="row"><button onclick="study()">Jetzt lernen</button><button class="g" onclick="anki()">Anki-Export</button><button class="g" onclick="if(confirm('Alle Karten löschen?')){P().cards=[];save();rc();rp()}">Alle löschen</button></div><div style="margin-top:12px">`+
+ (p.cards.map((c,i)=>`<div class="ci"><div><b>${esc(c.q)}</b><br><span class="mut">${esc(c.a)}</span></div><button class="g" onclick="P().cards.splice(${i},1);save();rc();rp()">×</button></div>`).join('')||'<p class="mut">Noch keine Karten. Rechts „Lernkarten“ klicken.</p>')+'</div>'}
+function study(){qu=P().cards.filter(c=>c.d<=Date.now()).sort(()=>Math.random()-.5);if(!qu.length)return toast('Nichts fällig 🎉 – komm später wieder.');studying=1;rs()}
+function rs(){const c=qu[0],e=$('#v-cards');if(!c){studying=0;toast('Fertig 🎉');rp();return rc()}flip=0;
+ e.innerHTML=`<p class="mut">${qu.length} übrig · Leertaste = umdrehen</p><div class="fc" onclick="fl()" id="fc">${esc(c.q)}</div><div class="row" id="rt"><button onclick="fl()">Antwort zeigen</button><button class="g" onclick="studying=0;rc();rp()">Beenden</button></div>`}
+function fl(){if(flip)return;flip=1;const c=qu[0];$('#fc').innerHTML='<div>'+esc(c.q)+'<hr><b>'+esc(c.a)+'</b></div>';$('#rt').innerHTML=['Nochmal','Schwer','Gut','Leicht'].map((t,g)=>`<button class="${g>1?'':'g'}" onclick="rate(${g})">${g+1} · ${t}</button>`).join('')}
+function rate(g){const c=qu.shift(),D=[.01,1,3,7,16,35];c.b=g===0?0:g===1?c.b:Math.min(5,c.b+(g===2?1:2));c.d=Date.now()+(g===0?6e5:D[c.b]*864e5);if(g===0)qu.push(c);bump();save();rs()}
+function anki(){const p=P(),f=s=>esc(s).replace(/[\t\r]+/g,' ').replace(/\n/g,'<br>');if(!p.cards.length)return toast('Keine Karten.');dl(p.n.replace(/\W+/g,'_')+'_anki.txt',`#separator:tab\n#html:true\n#deck:${p.n}\n`+p.cards.map(c=>f(c.q)+'\t'+f(c.a)).join('\n'));toast('In Anki: Datei → Importieren',5000)}
+/* Quiz */
+function rq(){const q=$('#v-quiz'),x=quiz[qi];ans=0;if(!quiz.length){q.innerHTML='<p class="mut">Noch kein Test. Rechts „Test / Quiz“ klicken.</p>';return}
+ if(!x){q.innerHTML=`<h2 style="margin-top:0">${score} / ${quiz.length} richtig</h2><p class="mut">${Math.round(score/quiz.length*100)} %</p><div class="row">${wrong.length?'<button onclick="wc()">Falsche als Karten speichern</button>':''}<button class="g" onclick="run(\'quiz\')">Neuer Test</button></div>`;return}
+ q.innerHTML=`<p class="mut">Frage ${qi+1} / ${quiz.length} · Tasten 1–4</p><div class="pb"><i style="width:${qi/quiz.length*100}%"></i></div><h3 style="margin-top:0">${esc(x.q)}</h3>`+x.o.map((o,i)=>`<button class="o" onclick="pick(${i},this)">${i+1} · ${esc(o)}</button>`).join('')+'<div id="ex"></div>'}
+function pick(i,el){if(ans)return;ans=1;const x=quiz[qi];document.querySelectorAll('#v-quiz .o')[x.c]?.classList.add('ok');if(i===x.c)score++;else{el.classList.add('no');wrong.push(x)}bump();
+ $('#ex').innerHTML=(x.e?`<p class="mut">💡 ${esc(x.e)}</p>`:'')+'<button style="margin-top:8px" onclick="qi++;rq()">Weiter ↵</button>'}
+function wc(){const p=P();wrong.forEach(x=>p.cards.push({q:x.q,a:x.o[x.c]+(x.e?' – '+x.e:''),b:0,d:0}));toast(wrong.length+' Karten gespeichert');wrong=[];save();rp();rq()}
+document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||document.querySelector('dialog[open]'))return;const k=e.key;
+ if(view==='quiz'&&quiz[qi]){if(!ans&&/^[1-4]$/.test(k)){const b=document.querySelectorAll('#v-quiz .o')[k-1];b&&b.click()}else if(ans&&(k==='Enter'||k===' ')){e.preventDefault();qi++;rq()}}
+ else if(view==='cards'&&studying&&qu[0]){if(!flip&&(k===' '||k==='Enter')){e.preventDefault();fl()}else if(flip&&/^[1-4]$/.test(k))rate(k-1)}});
+/* Keys */
+function openKeys(){rk();dg.showModal()}
+function rk(){$('#kl').innerHTML=S.keys.map((k,i)=>`<div class="kr"><div class="row"><select onchange="K(${i},'p',this.value)">${Object.keys(PV).map(x=>`<option value="${x}" ${x===k.p?'selected':''}>${PV[x].n}</option>`).join('')}</select><input type="password" placeholder="API-Key" value="${esc(k.key||'')}" onchange="K(${i},'key',this.value.trim())"></div><div class="row"><input placeholder="Modell (leer = ${PV[k.p].m})" value="${esc(k.m||'')}" onchange="K(${i},'m',this.value.trim())"><input placeholder="URL (optional)" value="${esc(k.u||'')}" onchange="K(${i},'u',this.value.trim())"></div><div class="row"><label><input type="checkbox" ${k.on?'checked':''} onchange="K(${i},'on',this.checked)"> aktiv</label><button class="g" onclick="mv(${i},-1)">↑</button><button class="g" onclick="mv(${i},1)">↓</button><button class="g" onclick="tk(${i})">Test</button><button class="g" onclick="S.keys.splice(${i},1);cool={};save();rk();ui()">Löschen</button></div></div>`).join('')||'<p class="mut">Noch kein Key. Mit „＋ Key“ starten.</p>'}
+function K(i,f,v){S.keys[i][f]=v;if(f==='p'){S.keys[i].m=S.keys[i].u='';rk()}save();ui()}
+function mv(i,d){const j=i+d;if(j<0||j>=S.keys.length)return;[S.keys[i],S.keys[j]]=[S.keys[j],S.keys[i]];cool={};save();rk()}
+function addK(){S.keys.push({p:'openai',key:'',m:'',u:'',on:true});save();rk()}
+async function tk(i){try{toast('✅ '+(await call(S.keys[i],[{role:'user',content:'Antworte nur mit: OK'}],[])).slice(0,40))}catch(e){toast('⚠️ '+e.message,6000)}}
+function imp(el){const f=el.files[0];if(f)f.text().then(t=>{try{const b=JSON.parse(t);S.pr.push(...b.pr.filter(p=>!S.pr.some(x=>x.id===p.id)));save();ui();toast('Importiert')}catch(e){toast('Ungültige Datei')}})}
+(async()=>{const s=await idb('get','S');if(s)S=s;else{try{const c=JSON.parse(localStorage.lb_cfg||'null'),d=JSON.parse(localStorage.lb_decks||'null');if(c&&c.k)S.keys.push({p:c.p,key:c.k,m:c.m,u:c.u,on:true});if(d&&d.length){const p=np('Importiert');d.forEach(x=>p.cards.push(...x.cards))}}catch(e){}}
+ S.stat=S.stat||{};if(!S.pr.length)np('Allgemein');if(!P())S.cur=S.pr[0].id;document.documentElement.dataset.t=S.t||'';segs();ui();if(!S.keys.length)openKeys()})();
+</script></body></html>
