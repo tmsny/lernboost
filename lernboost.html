@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>LernBoost</title>
+<style>
+:root{--bg:#f6f7fb;--fg:#1c1e29;--card:#fff;--mut:#6b7085;--ac:#5b5bf0;--bd:#e3e5ef;--ok:#17a65b;--no:#e0443e;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#12131a;--fg:#e9eaf2;--card:#1c1e29;--mut:#9aa0b8;--bd:#2c2f40;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;padding-bottom:40px}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--bd);padding:10px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+nav{display:flex;gap:6px;flex-wrap:wrap}nav button{border:0;background:none;color:var(--mut);padding:6px 12px;border-radius:99px;font:inherit;cursor:pointer}nav button.on{background:var(--ac);color:#fff}
+main{max-width:760px;margin:0 auto;padding:14px}.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+textarea,input,select{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:10px;padding:10px;font:inherit}
+label{font-size:13px;color:var(--mut);display:block}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:end}.row>label{flex:1;min-width:110px}
+.btn,button.b{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer;display:inline-block;color:#fff!important}
+.btn.s{background:var(--bg);color:var(--fg)!important;border:1px solid var(--bd)}button:disabled{opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+#th img{height:64px;border-radius:8px;cursor:pointer}.tab{display:none}.tab.on{display:block}
+.fc{min-height:170px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:19px;cursor:pointer;padding:20px}
+.o{display:block;width:100%;text-align:left;margin-top:8px;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:10px;padding:10px;font:inherit;cursor:pointer}
+.o.ok{border-color:var(--ok);background:rgba(23,166,91,.15)}.o.no{border-color:var(--no);background:rgba(224,68,62,.15)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:10px;display:none;max-width:90%;z-index:9}
+.m{color:var(--mut);font-size:14px}.msg{padding:8px 12px;border-radius:12px;margin:6px 0;max-width:90%}.u{background:var(--ac);color:#fff;margin-left:auto}.a{background:var(--bg)}
+code{background:var(--bg);padding:1px 5px;border-radius:5px}h4{margin:12px 0 4px}p{margin:6px 0}
+</style></head><body>
+<header><b>🎓 LernBoost</b><nav id="nav"></nav></header>
+<main>
+<section id="scan" class="tab">
+ <div class="card"><textarea id="txt" rows="6" placeholder="Text einfügen, Thema eingeben oder Foto machen …"></textarea>
+ <div class="row"><label class="btn">📷 Foto aufnehmen<input type="file" accept="image/*" capture="environment" hidden onchange="addf(this)"></label>
+ <label class="btn s">🖼 Bilder / .txt wählen<input type="file" accept="image/*,.txt,.md" multiple hidden onchange="addf(this)"></label></div>
+ <div id="th" class="row"></div></div>
+ <div class="card"><div class="row"><label>Anzahl (Karten / Fragen / Tage)<input id="n" type="number" value="10" min="1" max="40"></label>
+ <label>Niveau<select id="d"><option>leicht</option><option selected>mittel</option><option>schwer</option></select></label>
+ <label>Deck-Name<input id="dn" placeholder="z. B. Bio Zelle"></label></div>
+ <div class="grid">
+  <button class="b ai" onclick="run('cards')">🗂 Lernkarten (Anki)</button><button class="b ai" onclick="run('quiz')">📝 Test / Quiz</button>
+  <button class="b ai" onclick="run('sum')">📄 Zusammenfassung</button><button class="b ai" onclick="run('exp')">💡 Einfach erklärt</button>
+  <button class="b ai" onclick="run('gloss')">📚 Glossar</button><button class="b ai" onclick="run('plan')">🗓 Lernplan</button>
+  <button class="b ai" onclick="run('solve')">✏️ Aufgabe lösen</button><button class="b ai" onclick="run('mind')">🧠 Eselsbrücken</button></div></div>
+ <div id="out" class="card" hidden></div>
+</section>
+<section id="cards" class="tab"><div id="decks"></div><div id="study"></div></section>
+<section id="quiz" class="tab"><div id="qz" class="card"><p class="m">Noch kein Test. Erstelle einen unter „Lernen“.</p></div></section>
+<section id="chat" class="tab"><div class="card"><div id="msgs"></div><div class="row"><input id="ci" placeholder="Frag deinen KI-Tutor … (nutzt Text/Fotos von „Lernen“)" onkeydown="if(event.key==='Enter')send()"><button class="b" onclick="send()">Senden</button></div></div></section>
+<section id="set" class="tab"><div class="card">
+ <label>KI-Anbieter<select id="sp" onchange="sc()"></select></label>
+ <div class="row"><label>API-Key<input id="sk" type="password" placeholder="sk-… / AIza… / …" onchange="sc()"></label></div>
+ <div class="row"><label>Modell (leer = Standard)<input id="sm" onchange="sc()"></label><label>URL (optional / bei „Eigener“ Pflicht)<input id="su" onchange="sc()"></label></div>
+ <div class="row"><button class="b" onclick="tst()">Verbindung testen</button></div>
+ <p class="m">Der Key bleibt nur in deinem Browser (localStorage) und geht direkt an den Anbieter. Für Fotos brauchst du ein Vision-Modell.</p></div>
+ <div class="card"><b>Backup</b><div class="row"><button class="btn s" onclick="dl('lernboost-backup.json',JSON.stringify(decks))">Decks exportieren</button>
+ <label class="btn s">Decks importieren<input type="file" accept=".json" hidden onchange="imp(this)"></label></div></div>
+</section>
+</main><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},W=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let cfg=L('lb_cfg',{p:'openai',k:'',m:'',u:''}),decks=L('lb_decks',[]),imgs=[],quiz=[],qi=0,score=0,wrong=[],ans=0,chat=[],qu=[],cur=null,flip=0,di=0;
+const sv=()=>W('lb_decks',decks);
+const P={openai:{n:'OpenAI',t:'o',u:'https://api.openai.com/v1/chat/completions',m:'gpt-4o-mini'},
+anthropic:{n:'Anthropic Claude',t:'a',u:'https://api.anthropic.com/v1/messages',m:'claude-sonnet-5-5'},
+gemini:{n:'Google Gemini',t:'g',u:'https://generativelanguage.googleapis.com/v1beta/models',m:'gemini-2.5-flash'},
+openrouter:{n:'OpenRouter (alle Modelle)',t:'o',u:'https://openrouter.ai/api/v1/chat/completions',m:'openai/gpt-4o-mini'},
+groq:{n:'Groq',t:'o',u:'https://api.groq.com/openai/v1/chat/completions',m:'meta-llama/llama-4-scout-17b-16e-instruct'},
+mistral:{n:'Mistral',t:'o',u:'https://api.mistral.ai/v1/chat/completions',m:'pixtral-large-latest'},
+deepseek:{n:'DeepSeek (nur Text)',t:'o',u:'https://api.deepseek.com/chat/completions',m:'deepseek-chat'},
+custom:{n:'Eigener (OpenAI-kompatibel, z. B. Ollama)',t:'o',u:'',m:'llama3.2'}};
+const SYS='Du bist ein exzellenter, präziser Lerncoach für Schüler. Antworte in der Sprache des Materials (Standard: Deutsch). Erfinde keine Fakten.';
+const T={sum:()=>'Fasse das Material übersichtlich zusammen: Kernaussagen als Stichpunkte, wichtige Begriffe fett, am Ende 3 Merksätze. Nutze Markdown.',
+exp:()=>'Erkläre das Thema Schritt für Schritt und einfach, mit Beispielen. Nutze Markdown.',
+gloss:()=>'Erstelle ein Glossar der wichtigsten Begriffe mit kurzen Definitionen (Markdown-Liste).',
+plan:n=>`Erstelle einen realistischen Lernplan über ${n} Tage mit konkreten Aufgaben pro Tag und Wiederholungen.`,
+solve:()=>'Löse die Aufgabe(n) im Material Schritt für Schritt mit nachvollziehbarem Rechenweg und Endergebnis.',
+mind:()=>'Erfinde einprägsame Eselsbrücken, Merksprüche und Bilder-Assoziationen für die wichtigsten Inhalte.',
+cards:(n,d)=>`Erstelle genau ${n} Lernkarten (kurze, prüfbare Frage und knappe Antwort; Niveau: ${d}). Antworte NUR mit JSON: [{"q":"...","a":"..."}]`,
+quiz:(n,d)=>`Erstelle genau ${n} Multiple-Choice-Fragen (Niveau: ${d}) mit je 4 Optionen. Antworte NUR mit JSON: [{"q":"...","o":["...","...","...","..."],"c":0,"e":"kurze Erklärung"}] (c = Index der richtigen Option, zufällig verteilt).`};
+const tabs=[['scan','Lernen'],['cards','Karten'],['quiz','Quiz'],['chat','Tutor'],['set','⚙️']];
+$('#nav').innerHTML=tabs.map(t=>`<button id="b-${t[0]}" onclick="show('${t[0]}')">${t[1]}</button>`).join('');
+function show(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));tabs.forEach(x=>$('#b-'+x[0]).classList.toggle('on',x[0]===t));if(t==='cards'){cur=null;rd()}}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500)}
+function dl(n,s){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/plain'}));a.download=n;a.click()}
+function md(s){let h='',ul=0;for(let l of esc(s).split('\n')){const li=/^\s*[-*•] (.*)/.exec(l),hd=/^#{1,4} (.*)/.exec(l);if(li&&!ul){h+='<ul>';ul=1}if(!li&&ul){h+='</ul>';ul=0}l=(li?li[1]:hd?hd[1]:l).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>');h+=li?'<li>'+l+'</li>':hd?'<h4>'+l+'</h4>':l?'<p>'+l+'</p>':''}return h+(ul?'</ul>':'')}
+function shrink(f){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.82))};im.src=fr.result};fr.readAsDataURL(f)})}
+async function addf(el){for(const f of el.files){if(f.type.startsWith('image/'))imgs.push(await shrink(f));else $('#txt').value+='\n'+await f.text()}el.value='';rth()}
+function rth(){$('#th').innerHTML=imgs.map((s,i)=>`<img src="${s}" onclick="imgs.splice(${i},1);rth()" title="Entfernen">`).join('')}
+async function ai(msgs,im){
+ const p=P[cfg.p],key=cfg.k,model=cfg.m||p.m,url=cfg.u||p.u;im=im||[];
+ if(!key&&cfg.p!=='custom')throw new Error('Bitte zuerst unter ⚙️ einen API-Key eintragen.');
+ if(!url)throw new Error('Bitte unter ⚙️ eine URL eintragen.');
+ const sys=msgs[0].role==='system'?msgs[0].content:'',ms=msgs.filter(m=>m.role!=='system'),li=ms.length-1;let u,h={'Content-Type':'application/json'},b;
+ if(p.t==='a'){u=url;h['x-api-key']=key;h['anthropic-version']='2023-06-01';h['anthropic-dangerous-direct-browser-access']='true';
+  b={model,max_tokens:4096,system:sys,messages:ms.map((m,i)=>({role:m.role,content:i===li&&im.length?[...im.map(x=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:x.split(',')[1]}})),{type:'text',text:m.content}]:m.content}))}}
+ else if(p.t==='g'){u=`${url}/${model}:generateContent?key=${encodeURIComponent(key)}`;
+  b={systemInstruction:{parts:[{text:sys}]},contents:ms.map((m,i)=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content},...(i===li?im.map(x=>({inline_data:{mime_type:'image/jpeg',data:x.split(',')[1]}})):[])]}))}}
+ else{u=url;if(key)h.Authorization='Bearer '+key;
+  b={model,messages:[...(sys?[{role:'system',content:sys}]:[]),...ms.map((m,i)=>({role:m.role,content:i===li&&im.length?[{type:'text',text:m.content},...im.map(x=>({type:'image_url',image_url:{url:x}}))]:m.content}))]}}
+ const r=await fetch(u,{method:'POST',headers:h,body:JSON.stringify(b)});let d;try{d=await r.json()}catch(e){d={}}
+ if(!r.ok)throw new Error((d.error&&(d.error.message||d.error))||JSON.stringify(d).slice(0,300)||'Fehler '+r.status);
+ return p.t==='a'?d.content.map(x=>x.text||'').join(''):p.t==='g'?d.candidates[0].content.parts.map(x=>x.text||'').join(''):d.choices[0].message.content}
+const pj=s=>{const m=s.match(/\[[\s\S]*\]/);return JSON.parse(m?m[0]:s)};
+function busy(v){document.querySelectorAll('.ai').forEach(b=>b.disabled=v);if(v){const o=$('#out');o.hidden=false;o.innerHTML='<p class="m">⏳ KI arbeitet …</p>'}}
+async function run(k){
+ const txt=$('#txt').value.trim();if(!txt&&!imgs.length)return toast('Füge Text, ein Thema oder ein Foto hinzu.');
+ const n=+$('#n').value||10,d=$('#d').value;busy(true);
+ try{const out=await ai([{role:'system',content:SYS},{role:'user',content:T[k](n,d)+'\n\nMATERIAL:\n'+(txt||'(siehe Bilder)')}],imgs),o=$('#out');
+  if(k==='cards'){const c=pj(out).filter(x=>x.q&&x.a).map(x=>({q:String(x.q),a:String(x.a),b:0,d:0}));
+   const nm=$('#dn').value.trim()||txt.split('\n')[0].slice(0,30)||'Neues Deck';let dk=decks.find(x=>x.name===nm);if(!dk){dk={name:nm,cards:[]};decks.push(dk)}
+   dk.cards.push(...c);sv();o.innerHTML=`<p>✅ ${c.length} Karten im Deck <b>${esc(nm)}</b> gespeichert.</p><button class="b" onclick="show('cards')">Zu den Karten</button>`}
+  else if(k==='quiz'){quiz=pj(out).filter(x=>x.q&&Array.isArray(x.o));qi=0;score=0;wrong=[];ans=0;o.innerHTML=`<p>✅ ${quiz.length} Fragen bereit.</p><button class="b" onclick="show('quiz')">Test starten</button>`;rq()}
+  else{o.dataset.raw=out;o.innerHTML=md(out)+'<div class="row"><button class="btn s" onclick="navigator.clipboard.writeText($(\'#out\').dataset.raw);toast(\'Kopiert\')">Kopieren</button><button class="btn s" onclick="dl(\'lernboost.md\',$(\'#out\').dataset.raw)">Download</button></div>'}
+ }catch(e){$('#out').innerHTML='<p style="color:var(--no)">⚠️ '+esc(e.message)+'</p>'}busy2()}
+function busy2(){document.querySelectorAll('.ai').forEach(b=>b.disabled=false)}
+/* Karten */
+function rd(){$('#study').innerHTML='';$('#decks').innerHTML=decks.length?decks.map((d,i)=>{const due=d.cards.filter(c=>c.d<=Date.now()).length;return `<div class="card"><b>${esc(d.name)}</b><div class="m">${d.cards.length} Karten · ${due} fällig</div><div class="row"><button class="b" onclick="study(${i})">Lernen</button><button class="btn s" onclick="anki(${i})">Anki-Export</button><button class="btn s" onclick="if(confirm('Deck löschen?')){decks.splice(${i},1);sv();rd()}">Löschen</button></div></div>`}).join(''):'<div class="card m">Noch keine Decks. Erstelle Lernkarten unter „Lernen“.</div>'}
+function study(i){di=i;qu=decks[i].cards.filter(c=>c.d<=Date.now()).sort(()=>Math.random()-.5);if(!qu.length)return toast('Alles gelernt 🎉 – komm später wieder.');$('#decks').innerHTML='';rs()}
+function rs(){const c=qu[0];if(!c){toast('Fertig! 🎉');return rd()}flip=0;
+ $('#study').innerHTML=`<div class="m">${qu.length} übrig</div><div class="card fc" onclick="fl()" id="fc">${esc(c.q)}</div><div id="rt" class="row"><button class="b" onclick="fl()">Antwort zeigen</button><button class="btn s" onclick="rd()">Beenden</button></div>`}
+function fl(){const c=qu[0];if(flip)return;flip=1;$('#fc').innerHTML='<div>'+esc(c.q)+'<hr style="width:100%;border:0;border-top:1px solid var(--bd)"><b>'+esc(c.a)+'</b></div>';
+ $('#rt').innerHTML=['Nochmal','Schwer','Gut','Leicht'].map((t,g)=>`<button class="${g?'b':'btn s'}" onclick="rate(${g})">${t}</button>`).join('')}
+function rate(g){const c=qu.shift(),D=[.01,1,3,7,16,35];c.b=g===0?0:g===1?c.b:Math.min(5,c.b+(g===2?1:2));c.d=Date.now()+(g===0?6e5:D[c.b]*864e5);if(g===0)qu.push(c);sv();rs()}
+function anki(i){const d=decks[i],f=s=>esc(s).replace(/[\t\r]+/g,' ').replace(/\n/g,'<br>');dl(d.name.replace(/\W+/g,'_')+'_anki.txt',`#separator:tab\n#html:true\n#deck:${d.name}\n`+d.cards.map(c=>f(c.q)+'\t'+f(c.a)).join('\n'));toast('In Anki: Datei → Importieren')}
+function imp(el){const f=el.files[0];if(!f)return;f.text().then(t=>{try{decks=decks.concat(JSON.parse(t));sv();toast('Importiert')}catch(e){toast('Ungültige Datei')}})}
+/* Quiz */
+function rq(){const q=$('#qz'),x=quiz[qi];ans=0;
+ if(!x){q.innerHTML=`<h3>Ergebnis: ${score} / ${quiz.length}</h3><p class="m">${Math.round(score/quiz.length*100)}% richtig</p><div class="row">${wrong.length?'<button class="b" onclick="wrongCards()">Falsche als Karten speichern</button>':''}<button class="btn s" onclick="show(\'scan\')">Neuer Test</button></div>`;return}
+ q.innerHTML=`<div class="m">Frage ${qi+1} / ${quiz.length}</div><h3>${esc(x.q)}</h3>`+x.o.map((o,i)=>`<button class="o" onclick="pick(${i},this)">${esc(o)}</button>`).join('')+'<div id="ex"></div>'}
+function pick(i,el){if(ans)return;ans=1;const x=quiz[qi],bs=document.querySelectorAll('#qz .o');bs[x.c]&&bs[x.c].classList.add('ok');if(i===x.c)score++;else{el.classList.add('no');wrong.push(x)}
+ $('#ex').innerHTML=(x.e?`<p class="m">💡 ${esc(x.e)}</p>`:'')+'<button class="b" style="margin-top:8px" onclick="qi++;rq()">Weiter</button>'}
+function wrongCards(){let dk=decks.find(x=>x.name==='Quiz-Fehler');if(!dk){dk={name:'Quiz-Fehler',cards:[]};decks.push(dk)}wrong.forEach(x=>dk.cards.push({q:x.q,a:x.o[x.c]+(x.e?' – '+x.e:''),b:0,d:0}));sv();toast(wrong.length+' Karten gespeichert');wrong=[]}
+/* Tutor */
+function rm(){$('#msgs').innerHTML=chat.map(m=>`<div class="msg ${m.role==='user'?'u':'a'}">${md(m.content)}</div>`).join('')||'<p class="m">Stell eine Frage zum Material oder zu irgendeinem Thema.</p>'}
+async function send(){const v=$('#ci').value.trim();if(!v)return;$('#ci').value='';chat.push({role:'user',content:v});rm();
+ try{const mat=$('#txt').value.trim().slice(0,12000),r=await ai([{role:'system',content:SYS+' Erkläre geduldig, stelle bei Bedarf Rückfragen.'+(mat?'\nMaterial des Schülers:\n'+mat:'')},...chat],chat.length===1?imgs:[]);chat.push({role:'assistant',content:r})}
+ catch(e){chat.push({role:'assistant',content:'⚠️ '+e.message})}rm()}
+/* Einstellungen */
+$('#sp').innerHTML=Object.keys(P).map(k=>`<option value="${k}">${P[k].n}</option>`).join('');
+function lc(){$('#sp').value=cfg.p;$('#sk').value=cfg.k;$('#sm').value=cfg.m;$('#su').value=cfg.u;$('#sm').placeholder=P[cfg.p].m}
+function sc(){const np=$('#sp').value;cfg={p:np,k:$('#sk').value.trim(),m:$('#sm').value.trim(),u:$('#su').value.trim()};if(np!==(L('lb_cfg',{}).p))cfg.m=cfg.u='';W('lb_cfg',cfg);lc()}
+async function tst(){try{const r=await ai([{role:'user',content:'Antworte nur mit: OK'}]);toast('✅ Verbunden: '+r.slice(0,40))}catch(e){toast('⚠️ '+e.message)}}
+lc();rm();show(cfg.k||cfg.p==='custom'?'scan':'set');
+</script></body></html>
